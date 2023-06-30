@@ -1,0 +1,9 @@
+
+Library/
+obj/
+Logs/
+UserSettings/
+.vs/
+Assembly-CSharp-firstpass.csproj
+Assembly-CSharp.csproj
+SwipeFunctionality.sln
