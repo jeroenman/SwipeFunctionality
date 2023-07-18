@@ -9,12 +9,12 @@ EditorBuildSettings:
     path: Assets/Scenes/FeedScene.unity
     guid: 8c9cfa26abfee488c85f1582747f6a02
   - enabled: 1
-    path: Assets/Scenes/ContentScene1.unity
+    path: Assets/Scenes/ContentScenes/ContentScene1.unity
     guid: 55cf565b846119040af538a71ccbc856
   - enabled: 1
-    path: Assets/Scenes/ContentScene2.unity
+    path: Assets/Scenes/ContentScenes/ContentScene2.unity
     guid: b604699d847141d4faa3709a3c335530
   - enabled: 1
-    path: Assets/Scenes/ContentScene3.unity
+    path: Assets/Scenes/ContentScenes/ContentScene3.unity
     guid: 599da786a714e4a43abc31538d6027f3
   m_configObjects: {}

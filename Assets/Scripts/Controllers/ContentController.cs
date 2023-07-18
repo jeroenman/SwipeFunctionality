@@ -28,6 +28,7 @@ public class ContentController : MonoBehaviour
         presetFeedEntryNames.Add("ContentScene2");
         presetFeedEntryNames.Add("ContentScene3");
 
+        // CLEARING THIS STATIC CLASS OURSELVES SINCE DOMAIN RELOADING IS DISABLED (FOR FASTER PLAY TIMES)
         Events.Clear();
 
         Events.scrollFeedStart += (feedNum, scrollDirection) => { ScrollFeedStart(feedNum, scrollDirection); };
@@ -45,8 +46,8 @@ public class ContentController : MonoBehaviour
         if (scrollDirection == 0)
             return;
 
-
-        SetSpeedOfScene(previewingName, 0);
+        var content = GetContentOfScene(previewingName);
+        content.Play();
 
         if (previewingName == "")
         {
@@ -62,11 +63,12 @@ public class ContentController : MonoBehaviour
     {
         // ONCE SCROLL COMPLETE, UNLOAD AND RESET A BUNCH OF STUFF
 
+        var sceneName = presetFeedEntryNames[feedNum];
+        var content = GetContentOfScene(sceneName);
+        content.Play();
+
         if (feedNum == 0 && scrollDirection == 0 && lastPreviewingDirection == -1)
             return;
-
-        var sceneName = presetFeedEntryNames[feedNum];
-        SetSpeedOfScene(sceneName, 1);
 
         if (previewingName != "")
         {
@@ -76,6 +78,9 @@ public class ContentController : MonoBehaviour
         }
         else
         {
+            if (scrollDirection == 0)
+                return;
+
             var previousSceneName = presetFeedEntryNames[feedNum - scrollDirection];
             StartCoroutine(UnloadSceneAsync(previousSceneName, scrollDirection));
         }
@@ -100,7 +105,8 @@ public class ContentController : MonoBehaviour
             return;
 
         var sceneName = presetFeedEntryNames[feedNum];
-        SetSpeedOfScene(sceneName, 0);
+        var content = GetContentOfScene(sceneName);
+        content.Stop();
 
         var previewingDirection = (int)Mathf.Sign(feedY);
 
@@ -131,16 +137,17 @@ public class ContentController : MonoBehaviour
 
             // CREATE THE PREVIEW ENTRY
             previewingName = presetFeedEntryNames[previewFeedTarget];
-            StartCoroutine(LoadNewScene(previewingName, previewingDirection, speed: 0));
+            StartCoroutine(LoadNewScene(previewingName, previewingDirection, stop: true));
         }
     }
 
-    private void SetSpeedOfScene(string sceneName, float speed)
+    private Content GetContentOfScene(string sceneName)
     {
         var scene = SceneManager.GetSceneByName(sceneName);
         GameObject[] gameObjects = scene.GetRootGameObjects();
         var content = gameObjects[0].GetComponent<Content>();
-        content.avatar.GetComponent<Animator>().speed = speed;
+        
+        return content;
     }
 
     private void DestroyEntryOnSide(int side)
@@ -150,7 +157,7 @@ public class ContentController : MonoBehaviour
         Destroy(firstChild);
     }
 
-    private IEnumerator LoadNewScene(string sceneName, int scrollDirection = 0, float speed = 1)
+    private IEnumerator LoadNewScene(string sceneName, int scrollDirection = 0, bool stop = false)
     {
         // LOAD THE SCENE
         AsyncOperation asyncLoad = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
@@ -162,11 +169,12 @@ public class ContentController : MonoBehaviour
 
         // PREPARE THE SCENE
 
-        var scene = SceneManager.GetSceneByName(sceneName);
-        GameObject[] gameObjects = scene.GetRootGameObjects();
-        var content = gameObjects[0].GetComponent<Content>();
+        var content = GetContentOfScene(sceneName);
 
-        content.avatar.GetComponent<Animator>().speed = speed;
+        if (stop)
+        {
+            content.Stop();
+        }
 
         // DETERMINE LAYER TO USE
         string layerName = "";

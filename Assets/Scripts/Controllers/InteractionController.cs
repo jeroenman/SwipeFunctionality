@@ -15,6 +15,7 @@ public class InteractionController : MonoBehaviour
     private float pointerSpeedYLerpTo0 = 0;
     private int currentFeedNum = 0;
 
+    // HOOKED UP AT CANVAS->FEED->ON POINTER DOWN
     private void onPointerDownFeed()
     {
         // PREVENTING SOME BUGS BY NOT ALLOWING SCROLLING WHILE TWEENING
@@ -30,6 +31,7 @@ public class InteractionController : MonoBehaviour
         pointerLastY = pointerDownY;
     }
 
+    // HOOKED UP AT CANVAS->FEED->ON POINTER UP
     private void onPointerUpFeed()
     {
         if (!pointerIsDown)
